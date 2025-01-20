@@ -2,7 +2,6 @@
            PROGRAM-ID. Gestion-Inventario.
            DATA DIVISION.
            WORKING-STORAGE SECTION.
-               01 cant   PIC 9(3).
                01 opcion PIC 9(1).
                01 flag   PIC 9(1) VALUE 0.
            PROCEDURE DIVISION.
@@ -24,7 +23,7 @@
                            WHEN 2
                                CALL "Actualizar"
                            WHEN 3
-                               DISPLAY "Borro"
+                               CALL "Eliminar"
                            WHEN 4
                                DISPLAY "Estadisticas"
                            WHEN 5
