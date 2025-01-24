@@ -90,6 +90,7 @@
            INVALID KEY
                PERFORM INGRESO
                WRITE Product
+               DISPLAY X"1B" & "[2J"
                DISPLAY "Registro guardado correctamente"
            NOT INVALID KEY
                EXIT

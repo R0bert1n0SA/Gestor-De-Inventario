@@ -1,6 +1,11 @@
+      ******************************************************************
+      * Author:
+      * Date:
+      * Purpose:
+      * Tectonics: cobc
+      ******************************************************************
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. Eliminar AS "Eliminar".
-
+       PROGRAM-ID.Contabilizador AS "General".
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
@@ -8,7 +13,7 @@
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
-               FILE STATUS IS Productos-status.
+               FILE STATUS IS Ps.
 
        DATA DIVISION.
        FILE SECTION.
@@ -35,41 +40,33 @@
            05 Unidad-Medida        PIC X(2).
 
        WORKING-STORAGE SECTION.
-       01  Productos-status        PIC XX.
-       01  PID                     PIC X(10).
-       01  opcion                  PIC X(1).
-       01  Fecha                   PIC 9(8).
-       01  EOF-Flag          PIC X(1).
+           01 Ps  PIC XX.
+           01 EOF-Flag PIC X(1) VALUE "N".
+       LINKAGE SECTION.
+           01 Flag PIC 9(2).
+           01 Contador PIC 9(9) VALUE 0.
 
+       PROCEDURE DIVISION USING Flag,Contador.
+       MAIN-PROCEDURE.
+                  EVALUATE Flag
+                       WHEN 1
+                           PERFORM Contar
+                       WHEN 2
+                           DISPLAY "opcion "
+                   END-EVALUATE
+            STOP RUN.
+       EXIT PROGRAM.
 
-       PROCEDURE DIVISION.
-           MAIN-PROCEDURE.
-               PERFORM BUSCAR-DATO
-           EXIT PROGRAM.
-
-
-       ELIMINAR.
-           DELETE Productos
-               INVALID KEY
-                    DISPLAY "Error al eliminar el producto."
-                NOT INVALID KEY
-                    DISPLAY "Producto eliminado exitosamente."
-           END-DELETE
-           EXIT.
-
-       BUSCAR-DATO.
-           DISPLAY "Ingrese el id: "
-           ACCEPT PID
-           OPEN I-O Productos
-           MOVE PID TO Product-ID
-           READ Productos INTO Product KEY IS Product-ID
-           INVALID KEY
-               DISPLAY "Producto no existe"
-               CLOSE Productos
-               GOBACK
-           NOT INVALID KEY
-               PERFORM Eliminar
-               CLOSE Productos
-               GOBACK
-           END-READ
-           EXIT.
+       Contar.
+           OPEN INPUT Productos
+           PERFORM UNTIL EOF-Flag = 'Y'
+               READ Productos INTO Product
+                   AT END
+                       MOVE 'Y' TO EOF-Flag
+                       DISPLAY "Fin de archivo alcanzado"
+                   NOT AT END
+                     COMPUTE Contador=(Contador + 1)
+               END-READ
+           END-PERFORM
+           CLOSE Productos
+           Exit.

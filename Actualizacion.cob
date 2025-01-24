@@ -60,13 +60,13 @@
            INVALID KEY
                DISPLAY "No existe el producto"
                CLOSE Productos
-               STOP RUN
+               GOBACK
            NOT INVALID KEY
                PERFORM ACTUALIZAR
                REWRITE Product
                DISPLAY "Actualizado correctamente"
                CLOSE Productos
-               STOP RUN
+               GOBACK
            END-READ
            EXIT.
 

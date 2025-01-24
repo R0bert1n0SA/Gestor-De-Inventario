@@ -1,9 +1,3 @@
-      ******************************************************************
-      * Author:
-      * Date:
-      * Purpose:
-      * Tectonics: cobc
-      ******************************************************************
        IDENTIFICATION DIVISION.
            PROGRAM-ID. Mostrar AS "Mostrar".
            ENVIRONMENT DIVISION.
