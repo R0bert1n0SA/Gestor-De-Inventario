@@ -1,11 +1,5 @@
-      ******************************************************************
-      * Author:
-      * Date:
-      * Purpose:
-      * Tectonics: cobc
-      ******************************************************************
        IDENTIFICATION DIVISION.
-       PROGRAM-ID.Contabilizador AS "General".
+       PROGRAM-ID.General AS "General".
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
@@ -48,13 +42,8 @@
 
        PROCEDURE DIVISION USING Flag,Contador.
        MAIN-PROCEDURE.
-                  EVALUATE Flag
-                       WHEN 1
-                           PERFORM Contar
-                       WHEN 2
-                           DISPLAY "opcion "
-                   END-EVALUATE
-            STOP RUN.
+           PERFORM Contar
+           DISPLAY "total" Contador
        EXIT PROGRAM.
 
        Contar.
@@ -63,9 +52,13 @@
                READ Productos INTO Product
                    AT END
                        MOVE 'Y' TO EOF-Flag
-                       DISPLAY "Fin de archivo alcanzado"
                    NOT AT END
-                     COMPUTE Contador=(Contador + 1)
+                       EVALUATE Flag
+                           WHEN 1
+                               COMPUTE Contador=(Contador + 1)
+                           WHEN 2
+                               COMPUTE Contador=(Contador + Cantidad)
+                       END-EVALUATE
                END-READ
            END-PERFORM
            CLOSE Productos
