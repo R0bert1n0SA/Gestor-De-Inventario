@@ -14,9 +14,9 @@
        FILE SECTION.
        FD  Productos.
        01  Product.
-           05 Product-ID            PIC X(10).
+           05 Product-ID           PIC X(10).
            05 Nombre               PIC X(30).
-           05 Cantidad             PIC S9(7).
+           05 Stock                PIC 9(7).
            05 Precio-Unitario      PIC 9(5)V99.
            05 Categoria            PIC X(20).
            05 Proveedor            PIC X(50).
@@ -29,7 +29,7 @@
                10 Mes-Modificacion PIC 9(2).
                10 Dia-Modificacion PIC 99.
            05 Ubicacion            PIC X(50).
-           05 Stock-Minimo         PIC 9(4).
+           05 Stock-Minimo         PIC 9(7).
            05 Estado               PIC X(10).
            05 Descripcion          PIC X(100).
            05 Unidad-Medida        PIC X(2).
@@ -52,8 +52,8 @@
        INGRESO.
            DISPLAY "Ingrese nombre del producto: "
            ACCEPT   Nombre
-           DISPLAY "Ingrese cantidad del producto: "
-           ACCEPT   Cantidad
+           DISPLAY "Ingrese Stock Actual del producto: "
+           ACCEPT   Stock
            DISPLAY "Ingrese Precio: "
            ACCEPT   Precio-Unitario
            DISPLAY "Ingrese categoria del Producto: "

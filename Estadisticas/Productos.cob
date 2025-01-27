@@ -1,5 +1,5 @@
        IDENTIFICATION DIVISION.
-       PROGRAM-ID.General AS "General".
+       PROGRAM-ID. Productos AS "Productos".
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
@@ -28,24 +28,32 @@
                10 Mes-Modificacion PIC 9(2).
                10 Dia-Modificacion PIC 99.
            05 Ubicacion            PIC X(50).
-           05 Stock-Minimo         PIC 9(4).
+           05 Stock-Minimo         PIC 9(7).
            05 Estado               PIC X(10).
            05 Descripcion          PIC X(100).
            05 Unidad-Medida        PIC X(2).
 
        WORKING-STORAGE SECTION.
-           01 Ps  PIC XX.
+           01 Ps       PIC XX.
            01 EOF-Flag PIC X(1) VALUE "N".
-       LINKAGE SECTION.
-           01 Flag PIC 9(2).
-           01 Contador PIC 9(9) VALUE 0.
+           01 Maximo   PIC 9(7) VALUE 0.
+           01 Minimo   PIC 9(7) VALUE 9999999.
 
-       PROCEDURE DIVISION USING Flag,Contador.
+       LINKAGE SECTION.
+           01  Flag  PIC 9(2).
+           01  NombreP PIC X(30).
+
+       PROCEDURE DIVISION USING Flag, NombreP.
        MAIN-PROCEDURE.
-           PERFORM Contar
+           IF Flag = 5 THEN
+               DISPLAY "---------Productos con Bajo Stock------------"
+           END-IF
+           PERFORM Ranking
        EXIT PROGRAM.
 
-       Contar.
+
+
+       Ranking.
            OPEN INPUT Productos
            PERFORM UNTIL EOF-Flag = 'Y'
                READ Productos INTO Product
@@ -53,12 +61,22 @@
                        MOVE 'Y' TO EOF-Flag
                    NOT AT END
                        EVALUATE Flag
-                           WHEN 1
-                               COMPUTE Contador=(Contador + 1)
-                           WHEN 2
-                               COMPUTE Contador=(Contador + Stock)
+                           WHEN 3
+                               IF Stock > Maximo THEN
+                                   MOVE Nombre TO NombreP
+                               END-IF
+                           WHEN 4
+                               IF Stock > Minimo THEN
+                                   MOVE Nombre TO NombreP
+                               END-IF
+                           WHEN 5
+                               IF Stock > Stock-Minimo THEN
+                                   DISPLAY Nombre " Stock minimo: "
+                                   Stock-Minimo " Actual: " Stock
+                                   Stock-Minimo
+                               END-IF
                        END-EVALUATE
-               END-READ
+                END-READ
            END-PERFORM
            CLOSE Productos
-           Exit.
+           EXIT.

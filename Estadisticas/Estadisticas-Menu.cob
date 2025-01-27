@@ -6,6 +6,7 @@
            01 opcion PIC 9(2).
            01 Total PIC 9(9).
            01 tecla PIC X(1).
+           01 Nombre PIC X(30).
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
            PERFORM UNTIL flag = 1
@@ -39,11 +40,23 @@
                        DISPLAY "Presione Enter para continuar"
                        ACCEPT tecla
                    WHEN 3
-                       DISPLAY "opcion"
+                       CALL "Productos" USING opcion,Nombre
+                       DISPLAY "Stock total General: " Nombre
+                       DISPLAY "Presione Enter para continuar"
+                       ACCEPT tecla
                    WHEN 4
-                       DISPLAY "opcion"
+                       CALL "Productos" USING opcion,Nombre
+                       DISPLAY "Stock total General: " Nombre
+                       DISPLAY "Presione Enter para continuar"
+                       ACCEPT tecla
                    WHEN 5
-                       DISPLAY "Estadisticas"
+                       CALL "Productos" USING opcion,"y"
+                       DISPLAY "Presione Enter para continuar"
+                       ACCEPT tecla
+                   WHEN 6
+                       CALL "Categoria"
+                   WHEN 7
+                       CALL "Categoria"
                    WHEN 0
                        Move 1 to flag
                    WHEN OTHER
