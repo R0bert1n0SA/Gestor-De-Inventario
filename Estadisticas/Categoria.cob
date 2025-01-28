@@ -4,7 +4,8 @@
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT Productos
-           ASSIGN TO 'Productos.DAT'
+           ASSIGN TO
+           'F:\Proyectos\Cobol\Gestion de Inventarios\bin\Productos.DAT'
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
@@ -51,11 +52,13 @@
            01 EOF-Flag PIC X(1) VALUE "N".
            01 EOF-FlagT PIC X(1) VALUE "N".
            01 TempCat  PIC X(30).
+           01 maximo   PIC 9(9) VALUE 0.
+           01 CateMax  PIC X(20).
        LINKAGE SECTION.
            01 Flag PIC 9(2).
        PROCEDURE DIVISION USING Flag.
        MAIN-PROCEDURE.
-           PERFORM Cantidad
+           PERFORM Categoria-op
        EXIT PROGRAM.
 
 
@@ -65,6 +68,34 @@
            OPEN OUTPUT Tcat
            CLOSE Tcat
            EXIT.
+
+       Mostrar.
+           OPEN INPUT Tcat
+           PERFORM UNTIL EOF-FlagT ='Y'
+               READ Tcat INTO Temp-Reg
+                   AT END
+                       MOVE 'Y' TO EOF-Flag
+                       DISPLAY "Fin de archivo alcanzado"
+                   NOT AT END
+                       EVALUATE Flag
+                           WHEN 6
+                               DISPLAY Cat-Name ": "cant
+                           WHEN 7
+                               IF cant > maximo THEN
+                                   MOVE cant to maximo
+                                   MOVE Cat-Name TO CateMax
+                               END-IF
+                       END-EVALUATE
+               END-READ
+           END-PERFORM
+           CLOSE Tcat
+           DELETE FILE Tcat
+           IF Flag = 6 THEN
+               DISPLAY "La Categoria con mas elementos es: "CateMax ": "
+               maximo
+           END-IF
+           EXIT.
+
 
        Contar.
            OPEN I-O Tcat
@@ -77,10 +108,11 @@
                     COMPUTE cant=(cant + 1)
                     REWRITE Temp-Reg
            END-READ
+           CLOSE Tcat
            EXIT.
 
 
-       Cantidad.
+       Categoria-op.
            OPEN INPUT Productos
            PERFORM CrearT
            PERFORM UNTIL EOF-Flag = 'Y'

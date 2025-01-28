@@ -54,9 +54,13 @@
                        DISPLAY "Presione Enter para continuar"
                        ACCEPT tecla
                    WHEN 6
-                       CALL "Categoria"
+                       CALL "Categoria" USING opcion
+                       DISPLAY "Presione Enter para continuar"
+                       ACCEPT tecla
                    WHEN 7
-                       CALL "Categoria"
+                       CALL "Categoria" USING opcion
+                       DISPLAY "Presione Enter para continuar"
+                       ACCEPT tecla
                    WHEN 0
                        Move 1 to flag
                    WHEN OTHER
