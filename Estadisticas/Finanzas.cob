@@ -45,7 +45,7 @@
            01 Flag PIC 9(2).
        PROCEDURE DIVISION USING Flag.
        MAIN-PROCEDURE.
-           DISPLAY "Hello world"
+           PERFORM Finanzass
        EXIT PROGRAM.
 
 
