@@ -23,7 +23,7 @@
                DISPLAY "10.Producto mas barato"
                DISPLAY "11.Productos sin actualizacion reciente"
                DISPLAY "12.Fecha del ultimo registro"
-                           "añadido/modificado"
+                           "aÃ±adido/modificado"
                DISPLAY "0. Menu principal"
                DISPLAY "Ingrese una Opcion: "
                ACCEPT opcion
@@ -59,6 +59,18 @@
                        ACCEPT tecla
                    WHEN 7
                        CALL "Categoria" USING opcion
+                       DISPLAY "Presione Enter para continuar"
+                       ACCEPT tecla
+                   WHEN 8
+                       CALL "Finanzas" USING opcion
+                       DISPLAY "Presione Enter para continuar"
+                       ACCEPT tecla
+                   WHEN 9
+                       CALL "Finanzas" USING opcion
+                       DISPLAY "Presione Enter para continuar"
+                       ACCEPT tecla
+                   WHEN 10
+                       CALL "Finanzas" USING opcion
                        DISPLAY "Presione Enter para continuar"
                        ACCEPT tecla
                    WHEN 0
