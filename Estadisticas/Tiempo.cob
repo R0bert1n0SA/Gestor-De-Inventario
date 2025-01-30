@@ -9,7 +9,7 @@
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
-               FILE STATUS IS Ps.
+               FILE STATUS IS WS-Ps.
        DATA DIVISION.
        FILE SECTION.
        FD  Productos.
@@ -35,11 +35,14 @@
            05 Unidad-Medida        PIC X(2).
 
        WORKING-STORAGE SECTION.
-           01 Ps  PIC XX.
+           01 WS-Ps  PIC XX.
        LINKAGE SECTION.
-           01 Flag PIC 9(2).
-       PROCEDURE DIVISION USING Flag.
+           01 LK-Flag PIC 9(2).
+       PROCEDURE DIVISION USING LK-Flag.
        MAIN-PROCEDURE.
-           DISPLAY "Hello world"
-           STOP RUN.
+           PERFORM Sin-Actualizacion
        EXIT PROGRAM.
+
+
+       Sin-Actualizacion.
+           EXIT.
