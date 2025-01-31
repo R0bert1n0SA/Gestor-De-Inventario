@@ -14,6 +14,7 @@
            01 WS-Temp   PIC S9(2).
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
+           CALL "Tiempo"
            PERFORM UNTIL WS-flag = 1
                DISPLAY "------------Estadisticas----------------"
                DISPLAY "1.Total de productos registrados"

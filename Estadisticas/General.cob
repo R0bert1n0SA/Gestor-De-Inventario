@@ -8,7 +8,7 @@
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
-               FILE STATUS IS Ps.
+               FILE STATUS IS WS-Ps.
 
        DATA DIVISION.
        FILE SECTION.
@@ -35,29 +35,29 @@
            05 Unidad-Medida        PIC X(2).
 
        WORKING-STORAGE SECTION.
-           01 Ps  PIC XX.
-           01 EOF-Flag PIC X(1) VALUE "N".
+           01 WS-Ps  PIC XX.
+           01 WS-EOF-Flag PIC X(1) VALUE "N".
        LINKAGE SECTION.
-           01 Flag PIC 9(2).
-           01 Contador PIC 9(9) VALUE 0.
+           01 LK-Flag PIC 9(2).
+           01 LK-Contador PIC 9(9) VALUE 0.
 
-       PROCEDURE DIVISION USING Flag,Contador.
+       PROCEDURE DIVISION USING LK-Flag,LK-Contador.
        MAIN-PROCEDURE.
            PERFORM Contar
        EXIT PROGRAM.
 
        Contar.
            OPEN INPUT Productos
-           PERFORM UNTIL EOF-Flag = 'Y'
+           PERFORM UNTIL WS-EOF-Flag = 'Y'
                READ Productos INTO Product
                    AT END
-                       MOVE 'Y' TO EOF-Flag
+                       MOVE 'Y' TO WS-EOF-Flag
                    NOT AT END
-                       EVALUATE Flag
+                       EVALUATE LK-Flag
                            WHEN 1
-                               COMPUTE Contador=(Contador + 1)
+                               COMPUTE LK-Contador=(LK-Contador + 1)
                            WHEN 2
-                               COMPUTE Contador=(Contador + Stock)
+                               COMPUTE LK-Contador=(LK-Contador + Stock)
                        END-EVALUATE
                END-READ
            END-PERFORM
