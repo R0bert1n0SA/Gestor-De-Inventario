@@ -8,7 +8,7 @@
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
-               FILE STATUS IS Productos-status.
+               FILE STATUS IS WS-Productos-status.
 
        DATA DIVISION.
        FILE SECTION.
@@ -35,12 +35,8 @@
            05 Unidad-Medida        PIC X(2).
 
        WORKING-STORAGE SECTION.
-       01  Productos-status        PIC XX.
-       01  PID                     PIC X(10).
-       01  opcion                  PIC X(1).
-       01  Fecha                   PIC 9(8).
-       01  EOF-Flag          PIC X(1).
-
+       01  WS-Productos-status        PIC XX.
+       01  WS-PID                     PIC X(10).
 
        PROCEDURE DIVISION.
            MAIN-PROCEDURE.
@@ -59,9 +55,9 @@
 
        BUSCAR-DATO.
            DISPLAY "Ingrese el id: "
-           ACCEPT PID
+           ACCEPT WS-PID
            OPEN I-O Productos
-           MOVE PID TO Product-ID
+           MOVE WS-PID TO Product-ID
            READ Productos INTO Product KEY IS Product-ID
            INVALID KEY
                DISPLAY "Producto no existe"

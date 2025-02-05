@@ -7,7 +7,7 @@
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
-               FILE STATUS IS Productos-status.
+               FILE STATUS IS WS-Productos-status.
 
            DATA DIVISION.
            FILE SECTION.
@@ -34,8 +34,8 @@
                05 Unidad-Medida        PIC X(2).
 
            WORKING-STORAGE SECTION.
-           01  Productos-status        PIC XX.
-           01  EOF-Flag          PIC X(1).
+           01  WS-Productos-status        PIC XX.
+           01  WS-EOF-Flag          PIC X(1) VALUE 'N'.
 
            PROCEDURE DIVISION.
            MAIN-PROCEDURE.
@@ -44,12 +44,11 @@
 
 
        MOSTRAR.
-           MOVE 'N' TO EOF-Flag
            OPEN INPUT Productos
-           PERFORM UNTIL EOF-Flag = 'Y'
+           PERFORM UNTIL WS-EOF-Flag = 'Y'
                READ Productos INTO Product
                    AT END
-                       MOVE 'Y' TO EOF-Flag
+                       MOVE 'Y' TO WS-EOF-Flag
                        DISPLAY "Fin de archivo alcanzado"
                    NOT AT END
                        DISPLAY "--------------------------------"
@@ -73,4 +72,5 @@
                END-READ
            END-PERFORM
            CLOSE Productos
+           MOVE 'N' TO WS-EOF-Flag
            EXIT.

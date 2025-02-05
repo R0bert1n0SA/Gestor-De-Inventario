@@ -13,7 +13,7 @@
                    ORGANIZATION IS INDEXED
                    ACCESS MODE IS DYNAMIC
                    RECORD KEY IS Product-ID
-                   FILE STATUS IS Productos-status.
+                   FILE STATUS IS WS-Productos-status.
 
            DATA DIVISION.
            FILE SECTION.
@@ -40,10 +40,10 @@
                05 Unidad-Medida        PIC X(2).
 
            WORKING-STORAGE SECTION.
-           01 Productos-status PIC XX.
-           01 Fecha            PIC 9(8).
-           01 Year             PIC 9(4)  VALUE 2000.
-           01 PID              PIC 9(10).
+           01 WS-Productos-status PIC XX.
+           01 WS-Fecha            PIC 9(8).
+           01 WS-Year             PIC 9(4)  VALUE 2000.
+           01 WS-PID              PIC 9(10).
            PROCEDURE DIVISION.
            MAIN-PROCEDURE.
                PERFORM Leer
@@ -53,9 +53,9 @@
 
        Leer.
            DISPLAY "Ingrese el id: "
-           ACCEPT PID
+           ACCEPT WS-PID
            OPEN I-O Productos
-           MOVE PID TO Product-ID
+           MOVE WS-PID TO Product-ID
            READ Productos INTO Product KEY IS Product-ID
            INVALID KEY
                DISPLAY "No existe el producto"
@@ -77,11 +77,11 @@
            ACCEPT   Stock
            DISPLAY "Ingrese Precio: "
            ACCEPT   Precio-Unitario
-           ACCEPT  Fecha FROM DATE
-           MOVE    Fecha(7:2) TO Dia-Modificacion
-           MOVE    Fecha(5:2) TO Mes-Modificacion
-           MOVE    Fecha(1:4) TO Ano-Modificacion
-           ADD Ano-Modificacion TO Year GIVING Ano-Modificacion
+           ACCEPT  WS-Fecha FROM DATE
+           MOVE    WS-Fecha(7:2) TO Dia-Modificacion
+           MOVE    WS-Fecha(5:2) TO Mes-Modificacion
+           MOVE    WS-Fecha(1:4) TO Ano-Modificacion
+           ADD Ano-Modificacion TO WS-Year GIVING Ano-Modificacion
            DISPLAY  "Ingrese ubicacion: "
            ACCEPT   Ubicacion
            DISPLAY  "Ingrese Estado: "

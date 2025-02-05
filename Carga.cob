@@ -8,7 +8,7 @@
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
-               FILE STATUS IS Productos-status.
+               FILE STATUS IS WS-Productos-status.
 
        DATA DIVISION.
        FILE SECTION.
@@ -35,12 +35,10 @@
            05 Unidad-Medida        PIC X(2).
 
        WORKING-STORAGE SECTION.
-       01  Productos-status        PIC XX.
-       01  PID                     PIC X(10).
-       01  opcion                  PIC X(1).
-       01  Fecha                   PIC 9(8).
-       01  EOF-Flag          PIC X(1).
-
+       01  WS-Productos-status        PIC XX.
+       01  WS-PID                     PIC X(10).
+       01  WS-Fecha                   PIC 9(8).
+       01  WS-Year                    PIC 9(4)  VALUE 2000.
 
        PROCEDURE DIVISION.
            MAIN-PROCEDURE.
@@ -60,10 +58,14 @@
            ACCEPT   Categoria
            DISPLAY "Ingrese Proveedor: "
            ACCEPT   Proveedor
-           ACCEPT   Fecha FROM DATE
-           MOVE     Fecha(7:2) TO Dia-Registro
-           MOVE     Fecha(5:2) TO Mes-Registro
-           MOVE     Fecha(1:4) TO Ano-Registro
+           ACCEPT   WS-Fecha FROM DATE
+           MOVE     WS-Fecha(7:2) TO Dia-Registro
+           MOVE     WS-Fecha(5:2) TO Mes-Registro
+           MOVE     WS-Fecha(1:4) TO Ano-Registro
+           MOVE     0 TO Dia-Modificacion
+           MOVE     0 TO Mes-Modificacion
+           MOVE     0 TO Ano-Modificacion
+           ADD Ano-Registro TO WS-Year GIVING Ano-Registro
            DISPLAY  "Ingrese ubicacion: "
            ACCEPT   Ubicacion
            DISPLAY "Ingrese Stock minimo: "
@@ -78,14 +80,14 @@
 
        CARGAR-DATOS.
            DISPLAY "Ingrese el id: "
-           ACCEPT PID
+           ACCEPT WS-PID
            OPEN I-O Productos
            PERFORM BUSCAR-DATO
            CLOSE Productos
            EXIT.
 
        BUSCAR-DATO.
-           MOVE PID TO Product-ID
+           MOVE WS-PID TO Product-ID
            READ Productos INTO Product KEY IS Product-ID
            INVALID KEY
                PERFORM INGRESO

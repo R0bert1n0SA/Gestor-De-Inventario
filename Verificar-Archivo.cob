@@ -7,14 +7,14 @@
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
-               FILE STATUS IS Productos-status.
+               FILE STATUS IS WS-Productos-status.
 
            DATA DIVISION.
            FILE SECTION.
            FD  Productos.
            01 Product-ID PIC XX.
            WORKING-STORAGE SECTION.
-           01 Productos-status PIC XX.
+           01 WS-Productos-status PIC XX.
 
            PROCEDURE DIVISION.
            MAIN-PROCEDURE.
@@ -23,7 +23,7 @@
 
        Existe.
            OPEN INPUT Productos
-           IF Productos-status = "35" THEN
+           IF WS-Productos-status = "35" THEN
               OPEN OUTPUT Productos
               CLOSE Productos
            ELSE

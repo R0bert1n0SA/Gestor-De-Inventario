@@ -1,5 +1,5 @@
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. Estadisticas-Menu AS "Estadisticas".
+       PROGRAM-ID. Estadisticas-Menu AS "Estadisticas-Menu".
        DATA DIVISION.
        WORKING-STORAGE SECTION.
            01 WS-flag   PIC 9(1) VALUE 0.
@@ -10,11 +10,12 @@
            01 WS-Top    PIC 9(5)v99.
            01 WS-tecla  PIC X(1).
            01 WS-Nombre PIC X(30).
-           01 WS-dias   PIC 9(2).
+           01 WS-dias   PIC 9(3).
            01 WS-Temp   PIC S9(2).
+           01 WS-Fecha  PIC X(12) .
+
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
-           CALL "Tiempo"
            PERFORM UNTIL WS-flag = 1
                DISPLAY "------------Estadisticas----------------"
                DISPLAY "1.Total de productos registrados"
@@ -39,24 +40,19 @@
                    WHEN 1
                        CALL "General" USING WS-opcion,WS-Total
                        DISPLAY "Productos Registrados: "WS-Total
-                       DISPLAY "Presione Enter para continuar"
-                       ACCEPT WS-tecla
-
+                       PERFORM Continuar
                    WHEN 2
                        CALL "General" USING WS-opcion,WS-Total
                        DISPLAY "Stock total General: "WS-Total
-                       DISPLAY "Presione Enter para continuar"
-                       ACCEPT WS-tecla
+                       PERFORM Continuar
                    WHEN 3
                        CALL "Productos" USING WS-opcion,WS-Nombre
                        DISPLAY "Producto con mas stock: " WS-Nombre
-                       DISPLAY "Presione Enter para continuar"
-                       ACCEPT WS-tecla
+                       PERFORM Continuar
                    WHEN 4
                        CALL "Productos" USING WS-opcion,WS-Nombre
                        DISPLAY "Producto con menor Stock: " WS-Nombre
-                       DISPLAY "Presione Enter para continuar"
-                       ACCEPT WS-tecla
+                       PERFORM Continuar
 
                    WHEN 5
                        CALL "Productos" USING WS-opcion,"y"
@@ -64,20 +60,17 @@
                        ACCEPT WS-tecla
                    WHEN 6
                        CALL "Categoria" USING WS-opcion
-                       DISPLAY "Presione Enter para continuar"
-                       ACCEPT WS-tecla
+                       PERFORM Continuar
                    WHEN 7
                        CALL "Categoria" USING WS-opcion
-                       DISPLAY "Presione Enter para continuar"
-                       ACCEPT WS-tecla
+                       PERFORM Continuar
                    WHEN 8
                        MOVE " " TO WS-Nombre
                        MOVE 0 TO WS-Top
                        CALL "Finanzas" USING WS-opcion,WS-Nombre
                        ,WS-Costo,WS-Top
                        DISPLAY "Costo Total de Inventario: "WS-Costo
-                       DISPLAY "Presione Enter para continuar"
-                       ACCEPT WS-tecla
+                       PERFORM Continuar
                    WHEN 9
                        MOVE 0 TO WS-Top
                        MOVE 0 TO WS-Costo
@@ -85,8 +78,7 @@
                        ,WS-Costo,WS-Top
                        DISPLAY "EL Producto Mas Caro es: " WS-Nombre
                       " Precio: "WS-Top
-                       DISPLAY "Presione Enter para continuar"
-                       ACCEPT WS-tecla
+                       PERFORM Continuar
                    WHEN 10
                        MOVE 99999 TO WS-Top
                        MOVE 0 TO WS-Costo
@@ -94,18 +86,22 @@
                        ,WS-Costo,WS-Top
                        DISPLAY "EL Producto Mas Barato es: "WS-Nombre
                        " Precio: "WS-Top
-                       DISPLAY "Presione Enter para continuar"
-                       ACCEPT WS-tecla
+                       PERFORM Continuar
                    WHEN 11
                        MOVE WS-opcion TO WS-Temp
                        PERFORM Opcion_11
+                       PERFORM Continuar
                    WHEN 12
+                       CALL "Tiempo" USING WS-opcion,WS-dias,WS-Fecha
+                       DISPLAY "Fecha del ultimo registro: "WS-Fecha
+                       PERFORM Continuar
                    WHEN 0
                        Move 1 to WS-flag
+                       DISPLAY X"1B" & "[2J"
+                       STOP RUN
                    WHEN OTHER
                        DISPLAY "ERROR opcion no valida"
-                       DISPLAY "Presione Enter para continuar"
-                       ACCEPT WS-tecla
+                       PERFORM Continuar
                END-EVALUATE
            DISPLAY X"1B" & "[2J"
            END-PERFORM
@@ -130,11 +126,16 @@
                MOVE WS-opcion TO WS-dias
                IF WS-dias >= 1 and WS-dias <= 31 THEN
                    MOVE WS-Temp TO WS-opcion
-                   CALL "Tiempo" USING WS-opcion,WS-dias
+                   CALL "Tiempo" USING WS-opcion,WS-dias,WS-Fecha
                    MOVE 1 TO WS-flag
                ELSE
                    DISPLAY "Valor no valido"
                END-IF
            END-PERFORM
            MOVE 0 TO WS-flag
+           EXIT.
+
+       Continuar.
+           DISPLAY "Presione Enter para continuar"
+           ACCEPT WS-tecla
            EXIT.

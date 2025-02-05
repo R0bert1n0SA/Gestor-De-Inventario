@@ -3,12 +3,11 @@
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT Productos ASSIGN TO
-           'F:\Proyectos\Cobol\Gestion de Inventarios\bin\Productos.DAT'
+           SELECT Productos ASSIGN TO 'Productos.DAT'
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
-               FILE STATUS IS Ps.
+               FILE STATUS IS WS-Ps.
 
        DATA DIVISION.
        FILE SECTION.
@@ -35,18 +34,18 @@
            05 Unidad-Medida        PIC X(2).
 
        WORKING-STORAGE SECTION.
-           01 Ps       PIC XX.
-           01 EOF-Flag PIC X(1) VALUE "N".
-           01 Maximo   PIC 9(7) VALUE 0.
-           01 Minimo   PIC 9(7) VALUE 9999999.
+           01 WS-Ps        PIC XX.
+           01 WS-EOF-Flag  PIC X(1) VALUE "N".
+           01 WS-Maximo    PIC 9(7) VALUE 0.
+           01 WS-Minimo    PIC 9(7) VALUE 9999999.
 
        LINKAGE SECTION.
-           01  Flag  PIC 9(2).
-           01  NombreP PIC X(30).
+           01 LK-Flag    PIC 9(2).
+           01 LK-NombreP PIC X(30).
 
-       PROCEDURE DIVISION USING Flag, NombreP.
+       PROCEDURE DIVISION USING LK-Flag, LK-NombreP.
        MAIN-PROCEDURE.
-           IF Flag = 5 THEN
+           IF LK-Flag = 5 THEN
                DISPLAY "---------Productos con Bajo Stock------------"
            END-IF
            PERFORM Ranking
@@ -56,19 +55,19 @@
 
        Ranking.
            OPEN INPUT Productos
-           PERFORM UNTIL EOF-Flag = 'Y'
+           PERFORM UNTIL WS-EOF-Flag = 'Y'
                READ Productos INTO Product
                    AT END
-                       MOVE 'Y' TO EOF-Flag
+                       MOVE 'Y' TO WS-EOF-Flag
                    NOT AT END
-                       EVALUATE Flag
+                       EVALUATE LK-Flag
                            WHEN 3
-                               IF Stock > Maximo THEN
-                                   MOVE Nombre TO NombreP
+                               IF Stock > WS-Maximo THEN
+                                   MOVE Nombre TO LK-NombreP
                                END-IF
                            WHEN 4
-                               IF Stock > Minimo THEN
-                                   MOVE Nombre TO NombreP
+                               IF Stock > WS-Minimo THEN
+                                   MOVE Nombre TO LK-NombreP
                                END-IF
                            WHEN 5
                                IF Stock > Stock-Minimo THEN
@@ -80,4 +79,5 @@
                 END-READ
            END-PERFORM
            CLOSE Productos
+           MOVE 'N' TO WS-EOF-Flag
            EXIT.

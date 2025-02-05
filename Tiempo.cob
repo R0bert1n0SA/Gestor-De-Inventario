@@ -3,9 +3,7 @@
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT Productos
-           ASSIGN TO
-           'F:\Proyectos\Cobol\Gestion de Inventarios\bin\Productos.DAT'
+           SELECT Productos ASSIGN TO 'Productos.DAT'
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
@@ -35,29 +33,35 @@
            05 Unidad-Medida        PIC X(2).
 
        WORKING-STORAGE SECTION.
-           01 WS-Ps       PIC XX.
-           01 WS-EOF-Flag PIC X(1) VALUE 'N'.
-           01 WS-Dias     PIC 9(9).
-           01 WS-DiasAC   PIC 9(9).
-           01 WS-DiasP    PIC 9(9).
-           01 WS-RESIDUO  PIC 9(3).
-           01 WS-Mod4     PIC 9(3).
-           01 WS-Mod100   PIC 9(3).
-           01 WS-Mod400   PIC 9(3).
+           01 WS-Ps                 PIC XX.
+           01 WS-EOF-Flag           PIC X(1) VALUE 'N'.
+           01 WS-Dias               PIC 9(9).
+           01 WS-DiasAC             PIC 9(9).
+           01 WS-DiasP              PIC 9(9).
+           01 WS-RESIDUO            PIC 9(3).
+           01 WS-Mod4               PIC 9(3).
+           01 WS-Mod100             PIC 9(3).
+           01 WS-Mod400             PIC 9(3).
            01 WS-Fecha.
-              05 WS-anio  PIC 9(4).
-              05 WS-mes   PIC 9(2).
-              05 WS-dia   PIC 9(2).
-           01 WS-Tabla-Meses.
-               05 WS-Meses-Normales     PIC 9(2) OCCURS 13 TIMES.
-           01 WS-Contador PIC 9(2) VALUE 0.
+              05 WS-anio            PIC 9(4).
+              05 WS-mes             PIC 9(2).
+              05 WS-dia             PIC 9(2).
+           01 WS-Meses-Normales     PIC 9(2) OCCURS 13 TIMES.
+           01 WS-Contador           PIC 9(2) VALUE 0.
+           01 WS-FechaMax           PIC 9(8) VALUE 0.
+           01 WS-FechaAux           PIC 9(8).
+           01 WS-Producto           PIC X(30) VALUE " ".
+           01 WS-FechaString        PIC X(12).
        LINKAGE SECTION.
-           01 LK-Flag     PIC 9(2).
-           01 LK-desact   PIC 9(3).
-       PROCEDURE DIVISION USING LK-Flag.
+           01 LK-Flag               PIC 9(2).
+           01 LK-desact             PIC 9(3).
+           01 LK-Fecha              PIC X(12).
+       PROCEDURE DIVISION USING LK-Flag,LK-desact,LK-Fecha .
        MAIN-PROCEDURE.
            PERFORM Inicializar-Meses
-           PERFORM Sin-Actualizacion
+           PERFORM Buscar
+           PERFORM Reformato-Fecha
+           MOVE WS-FechaString TO LK-Fecha
        EXIT PROGRAM.
 
        Inicializar-Meses.
@@ -79,6 +83,24 @@
 
 
 
+
+       Reformato-Fecha.
+           DIVIDE WS-FechaMax BY 10000 GIVING WS-anio
+           REMAINDER WS-FechaMax.
+           DIVIDE WS-FechaMax BY 100 GIVING WS-mes REMAINDER WS-dia
+           STRING  WS-DIA "/" WS-MES "/" WS-ANIO
+               DELIMITED BY SIZE INTO WS-FechaString
+           END-STRING.
+           EXIT.
+
+
+       Verificar-Mod.
+           IF Ano-Modificacion NUMERIC AND Ano-Modificacion > 0 THEN
+               MOVE 0 TO WS-Contador
+           ELSE
+               MOVE 1 TO WS-Contador
+           END-IF
+           EXIT.
 
        Meses.
            PERFORM VARYING WS-Contador FROM 1 BY 1
@@ -106,6 +128,7 @@
 
 
        Calculo.
+           MOVE 0 TO WS-Dias
            IF WS-anio > 0 THEN
                PERFORM Anio-Bisiesto
                IF WS-RESIDUO = 0 THEN
@@ -118,6 +141,46 @@
 
 
        Sin-Actualizacion.
+           MOVE FUNCTION CURRENT-DATE TO WS-Fecha
+           PERFORM Calculo
+           MOVE WS-Dias TO WS-DiasAC
+
+           PERFORM  Verificar-Mod
+           IF WS-Contador = 0 THEN
+               MOVE Ano-Modificacion TO WS-anio
+               MOVE Mes-Registro TO WS-mes
+               MOVE Dia-Modificacion TO WS-dia
+               PERFORM Calculo
+               MOVE WS-Dias TO WS-DiasP
+           END-IF
+
+           COMPUTE WS-dias =(WS-DiasAC - WS-DiasP)
+           IF WS-dias > LK-desact THEN
+               DISPLAY Nombre
+           END-IF
+           EXIT.
+
+       Ultimo-Registro.
+           PERFORM Verificar-Mod
+           IF WS-Contador = 0 THEN
+               COMPUTE WS-FechaAux=(Ano-Modificacion * 10000)
+               +(Mes-Modificacion * 100) + Dia-Modificacion
+           ELSE
+               COMPUTE WS-FechaAux=(Ano-Registro * 10000)
+               +(Mes-Registro * 100) + Dia-Registro
+           END-IF
+           IF WS-FechaAux > WS-FechaMax THEN
+               MOVE WS-FechaAux TO WS-FechaMax
+               MOVE Nombre TO WS-Producto
+           END-IF
+           EXIT.
+
+
+
+
+
+
+       Buscar.
            OPEN INPUT Productos
            PERFORM UNTIL WS-EOF-Flag = 'Y'
                READ Productos INTO Product
@@ -126,26 +189,12 @@
                    NOT AT END
                        EVALUATE LK-Flag
                            WHEN 11
-                               MOVE FUNCTION CURRENT-DATE TO WS-Fecha
-                               PERFORM Calculo
-                               MOVE WS-Dias TO WS-DiasAC
-                               MOVE 0 TO WS-Dias
-
-                               MOVE Ano-Modificacion TO WS-anio
-                               MOVE Mes-Registro TO WS-mes
-                               MOVE Dia-Modificacion TO WS-dia
-                               PERFORM Calculo
-                               MOVE WS-Dias TO WS-DiasP
-                               MOVE 0 TO WS-Dias
-
-                               COMPUTE WS-dias =(WS-DiasAC - WS-DiasP)
-                               IF WS-dias > LK-desact THEN
-                                   DISPLAY Nombre
-                               END-IF
+                               PERFORM Sin-Actualizacion
                            WHEN 12
-                               IF
+                               PERFORM Ultimo-Registro
                        END-EVALUATE
                END-READ
            END-PERFORM
            CLOSE Productos
+           MOVE 'N' TO WS-EOF-Flag
            EXIT.

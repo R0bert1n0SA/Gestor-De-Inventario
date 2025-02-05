@@ -3,9 +3,7 @@
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT Productos
-           ASSIGN TO
-           'F:\Proyectos\Cobol\Gestion de Inventarios\bin\Productos.DAT'
+           SELECT Productos ASSIGN TO 'Productos.DAT'
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
@@ -95,4 +93,5 @@
                END-READ
            END-PERFORM
            CLOSE Productos
+           MOVE 'N' TO WS-EOF-Flag
            EXIT.

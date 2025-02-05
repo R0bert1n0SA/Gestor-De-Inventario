@@ -2,12 +2,12 @@
            PROGRAM-ID. Gestion-Inventario.
            DATA DIVISION.
            WORKING-STORAGE SECTION.
-           01 opcion PIC 9(1).
-           01 flag PIC 9(1) VALUE 0.
-           01 EnterT PIC X(1).
+           01 WS-opcion PIC 9(1).
+           01 WS-flag PIC 9(1) VALUE 0.
+           01 WS-EnterT PIC X(1).
            PROCEDURE DIVISION.
            MAIN-PROGRAM.
-               PERFORM UNTIL flag = 1
+               PERFORM UNTIL WS-flag = 1
                    CALL "Verificar-Archivo"
                    DISPLAY "------------MENU----------------"
                    DISPLAY "1. Cargar Producto"
@@ -17,9 +17,9 @@
                    DISPLAY "5. Sacar Estadisticas"
                    DISPLAY "6. Salir"
                    DISPLAY "Ingrese una Opcion: "
-                   ACCEPT opcion
+                   ACCEPT WS-opcion
                    DISPLAY X"1B" & "[2J"
-                   EVALUATE opcion
+                   EVALUATE WS-opcion
                        WHEN 1
                            CALL "Carga"
                        WHEN 2
@@ -29,14 +29,14 @@
                        WHEN 4
                            CALL "Mostrar"
                        WHEN 5
-                           CALL "Estadisticas"
+                           CALL "Estadisticas-Menu"
                        WHEN 6
                            DISPLAY "Gracias por usar la app"
-                           MOVE 1 TO flag
+                           MOVE 1 TO WS-flag
                        WHEN OTHER
                            DISPLAY "ERROR opcion no valida"
                            DISPLAY "Presione Enter para continuar"
-                           ACCEPT EnterT
+                           ACCEPT WS-EnterT
                            DISPLAY X"1B" & "[2J"
                    END-EVALUATE
                END-PERFORM
