@@ -40,37 +40,27 @@
                    WHEN 1
                        CALL "General" USING WS-opcion,WS-Total
                        DISPLAY "Productos Registrados: "WS-Total
-                       PERFORM Continuar
                    WHEN 2
                        CALL "General" USING WS-opcion,WS-Total
                        DISPLAY "Stock total General: "WS-Total
-                       PERFORM Continuar
                    WHEN 3
                        CALL "Productos" USING WS-opcion,WS-Nombre
                        DISPLAY "Producto con mas stock: " WS-Nombre
-                       PERFORM Continuar
                    WHEN 4
                        CALL "Productos" USING WS-opcion,WS-Nombre
                        DISPLAY "Producto con menor Stock: " WS-Nombre
-                       PERFORM Continuar
-
                    WHEN 5
                        CALL "Productos" USING WS-opcion,"y"
-                       DISPLAY "Presione Enter para continuar"
-                       ACCEPT WS-tecla
                    WHEN 6
                        CALL "Categoria" USING WS-opcion
-                       PERFORM Continuar
                    WHEN 7
                        CALL "Categoria" USING WS-opcion
-                       PERFORM Continuar
                    WHEN 8
                        MOVE " " TO WS-Nombre
                        MOVE 0 TO WS-Top
                        CALL "Finanzas" USING WS-opcion,WS-Nombre
                        ,WS-Costo,WS-Top
                        DISPLAY "Costo Total de Inventario: "WS-Costo
-                       PERFORM Continuar
                    WHEN 9
                        MOVE 0 TO WS-Top
                        MOVE 0 TO WS-Costo
@@ -78,7 +68,6 @@
                        ,WS-Costo,WS-Top
                        DISPLAY "EL Producto Mas Caro es: " WS-Nombre
                       " Precio: "WS-Top
-                       PERFORM Continuar
                    WHEN 10
                        MOVE 99999 TO WS-Top
                        MOVE 0 TO WS-Costo
@@ -86,24 +75,20 @@
                        ,WS-Costo,WS-Top
                        DISPLAY "EL Producto Mas Barato es: "WS-Nombre
                        " Precio: "WS-Top
-                       PERFORM Continuar
                    WHEN 11
                        MOVE WS-opcion TO WS-Temp
                        PERFORM Opcion_11
-                       PERFORM Continuar
                    WHEN 12
                        CALL "Tiempo" USING WS-opcion,WS-dias,WS-Fecha
                        DISPLAY "Fecha del ultimo registro: "WS-Fecha
-                       PERFORM Continuar
                    WHEN 0
-                       Move 1 to WS-flag
                        DISPLAY X"1B" & "[2J"
-                       STOP RUN
+                       MOVE 1 TO WS-flag
                    WHEN OTHER
-                       DISPLAY "ERROR opcion no valida"
-                       PERFORM Continuar
+                       DISPLAY "ERROR caracter no valido"
                END-EVALUATE
-           DISPLAY X"1B" & "[2J"
+                   PERFORM Continuar
+               DISPLAY X"1B" & "[2J"
            END-PERFORM
        EXIT PROGRAM.
 
@@ -111,7 +96,7 @@
 
        Verificar.
            IF FUNCTION TEST-NUMVAL(WS-Input) = 0 THEN
-               MOVE WS-Input TO WS-opcion
+               MOVE FUNCTION NUMVAL(WS-Input) TO WS-opcion
            ELSE
                MOVE -99 TO WS-opcion
            END-IF
@@ -136,6 +121,10 @@
            EXIT.
 
        Continuar.
-           DISPLAY "Presione Enter para continuar"
-           ACCEPT WS-tecla
+           IF WS-opcion = 0 THEN
+               GOBACK
+           ELSE
+               DISPLAY "Presione Enter para continuar"
+               ACCEPT WS-tecla
+           END-IF
            EXIT.
