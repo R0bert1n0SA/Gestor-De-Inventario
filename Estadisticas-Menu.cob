@@ -50,7 +50,9 @@
                        CALL "Productos" USING WS-opcion,WS-Nombre
                        DISPLAY "Producto con menor Stock: " WS-Nombre
                    WHEN 5
-                       CALL "Productos" USING WS-opcion,"y"
+                       CALL "Productos" USING WS-opcion,WS-Nombre
+                       DISPLAY "---------Productos con Bajo Stock------"
+                       "------"
                    WHEN 6
                        CALL "Categoria" USING WS-opcion
                    WHEN 7

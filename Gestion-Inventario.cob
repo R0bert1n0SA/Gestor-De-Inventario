@@ -5,10 +5,12 @@
            01 WS-opcion PIC 9(1).
            01 WS-flag PIC 9(1) VALUE 0.
            01 WS-EnterT PIC X(1).
+           01 WS-Estado PIC 9(1).
        PROCEDURE DIVISION.
        MAIN-PROGRAM.
            PERFORM UNTIL WS-flag = 1
-               CALL "Verificar-Archivo"
+               MOVE 1 TO WS-Estado
+               CALL "Verificar-Archivo" USING WS-Estado
                DISPLAY "------------MENU----------------"
                DISPLAY "1. Cargar Producto"
                DISPLAY "2. Actualizar"
@@ -38,12 +40,16 @@
                        DISPLAY "ERROR opcion no valida"
                END-EVALUATE
                PERFORM Continuar
-               DISPLAY X"1B" & "[2J"
            END-PERFORM
 
        STOP RUN.
 
        Continuar.
-           DISPLAY "Presione Enter para continuar"
-           ACCEPT WS-EnterT
+           IF WS-opcion = 5 THEN
+               DISPLAY X"1B" & "[2J"
+           ELSE
+               DISPLAY "Presione Enter para continuar"
+               ACCEPT WS-EnterT
+               DISPLAY X"1B" & "[2J"
+           END-IF
            EXIT.

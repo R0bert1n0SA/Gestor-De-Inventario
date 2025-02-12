@@ -1,29 +1,31 @@
        IDENTIFICATION DIVISION.
-           PROGRAM-ID. Verificar-Archivo AS "Verificar-Archivo".
-           ENVIRONMENT DIVISION.
-           INPUT-OUTPUT SECTION.
-           FILE-CONTROL.
+       PROGRAM-ID. Verificar-Archivo AS "Verificar-Archivo".
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
            SELECT Productos ASSIGN TO 'Productos.DAT'
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
-               FILE STATUS IS WS-Productos-status.
+               FILE STATUS IS WS-FileStatus.
 
-           DATA DIVISION.
-           FILE SECTION.
-           FD  Productos.
-           01 Product-ID PIC XX.
-           WORKING-STORAGE SECTION.
-           01 WS-Productos-status PIC XX.
+       DATA DIVISION.
+       FILE SECTION.
+       FD  Productos.
+           01 Product-ID PIC X(10).
 
-           PROCEDURE DIVISION.
+       WORKING-STORAGE SECTION.
+           01 WS-FileStatus PIC XX.
+
+       PROCEDURE DIVISION .
            MAIN-PROCEDURE.
                PERFORM Existe
            EXIT PROGRAM.
 
+
        Existe.
            OPEN INPUT Productos
-           IF WS-Productos-status = "35" THEN
+           IF WS-FileStatus = "35" THEN
               OPEN OUTPUT Productos
               CLOSE Productos
            ELSE
