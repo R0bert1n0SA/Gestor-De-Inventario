@@ -22,26 +22,31 @@
 
        PROCEDURE DIVISION.
            MAIN-PROCEDURE.
-               PERFORM Buscar-Dato
+               PERFORM Inicio
            EXIT PROGRAM.
+      *================================================================*
+       *> SECCION ELiminar
+       *> Solicita el ID del producto y procede a eliminarlo.
+      *================================================================*
+       Eliminar SECTION.
+           Inicio.
+               DISPLAY "Ingrese el id a eliminar: "
+               ACCEPT WS-PID
+               OPEN I-O Productos
+               IF WS-File-Status = '00' THEN
+                   PERFORM Buscar
+                   CLOSE Productos
+               ELSE
+                   CALL "Errores" USING WS-File-Status
+               END-IF.
+           EXIT.
 
-       Buscar-Dato.
-           DISPLAY "Ingrese el id a eliminar : "
-           ACCEPT WS-PID
-           OPEN I-O Productos
-           IF WS-File-Status  = '00' THEN
-               PERFORM Recorrer-Archivo
-               CLOSE Productos
-           ELSE
-               DISPLAY "Error : "WS-File-Status
-           END-IF
-       EXIT.
-
-
-       Recorrer-Archivo.
-           MOVE WS-PID TO Product-ID
-           READ Productos INTO Product KEY IS Product-ID
-               NOT INVALID KEY
-                   DELETE Productos
-           END-READ
-       EXIT.
+           Buscar.
+               MOVE WS-PID TO Product-ID
+               READ Productos INTO Product KEY IS Product-ID
+                   NOT INVALID KEY
+                       DELETE Productos
+                       DISPLAY "Producto eliminado exitosamente."
+               END-READ.
+           EXIT.
+      *================================================================*

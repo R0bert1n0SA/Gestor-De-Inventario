@@ -1,6 +1,5 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Carga AS "Carga".
-
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
@@ -8,7 +7,7 @@
                ORGANIZATION IS INDEXED
                ACCESS MODE IS DYNAMIC
                RECORD KEY IS Product-ID
-               FILE STATUS IS WS-Productos-status.
+               FILE STATUS IS WS-FileStatus.
 
        DATA DIVISION.
        FILE SECTION.
@@ -35,66 +34,75 @@
            05 Unidad-Medida        PIC X(2).
 
        WORKING-STORAGE SECTION.
-       01  WS-Productos-status        PIC XX.
+       01  WS-FileStatus       PIC XX.
        01  WS-PID                     PIC X(10).
        01  WS-Fecha                   PIC 9(8).
        01  WS-Year                    PIC 9(4)  VALUE 2000.
 
        PROCEDURE DIVISION.
            MAIN-PROCEDURE.
-               PERFORM CARGAR-DATOS
+               PERFORM Inicio-Carga
            EXIT PROGRAM.
 
 
-
-       INGRESO.
-           DISPLAY "Ingrese nombre del producto: "
-           ACCEPT   Nombre
-           DISPLAY "Ingrese Stock Actual del producto: "
-           ACCEPT   Stock
-           DISPLAY "Ingrese Precio: "
-           ACCEPT   Precio-Unitario
-           DISPLAY "Ingrese categoria del Producto: "
-           ACCEPT   Categoria
-           DISPLAY "Ingrese Proveedor: "
-           ACCEPT   Proveedor
-           ACCEPT   WS-Fecha FROM DATE
-           MOVE     WS-Fecha(7:2) TO Dia-Registro
-           MOVE     WS-Fecha(5:2) TO Mes-Registro
-           MOVE     WS-Fecha(1:4) TO Ano-Registro
-           MOVE     0 TO Dia-Modificacion
-           MOVE     0 TO Mes-Modificacion
-           MOVE     0 TO Ano-Modificacion
-           ADD Ano-Registro TO WS-Year GIVING Ano-Registro
-           DISPLAY  "Ingrese ubicacion: "
-           ACCEPT   Ubicacion
-           DISPLAY "Ingrese Stock minimo: "
-           ACCEPT   Stock-Minimo
-           DISPLAY  "Ingrese Estado: "
-           ACCEPT   Estado
-           DISPLAY "Ingrese descripcion: "
-           ACCEPT   Descripcion
-           DISPLAY "Ingrese unidad de medida"
-           ACCEPT  Unidad-Medida
+      *>================================================================*
+       *> SECCION Cargar
+       *> Gestiona la carga de datos en el archivo.
+      *>================================================================*
+       Cargar SECTION.
+           Inicio-Carga.
+               DISPLAY "Ingrese el ID del producto: "
+               ACCEPT WS-PID
+               OPEN I-O Productos
+               IF WS-FileStatus = "00" THEN
+                   PERFORM Inicio-Busqueda
+                   CLOSE Productos
+               ELSE
+                   CALL "Errores" USING WS-FileStatus
+               END-IF.
            EXIT.
 
-       CARGAR-DATOS.
-           DISPLAY "Ingrese el id: "
-           ACCEPT WS-PID
-           OPEN I-O Productos
-           PERFORM BUSCAR-DATO
-           CLOSE Productos
+
+           Inicio-Busqueda.
+               MOVE WS-PID TO Product-ID
+               READ Productos INTO Product KEY IS Product-ID
+               INVALID KEY
+                   PERFORM Ingreso
+                   WRITE Product
+                   DISPLAY "Registro guardado correctamente."
+               NOT INVALID KEY
+                   DISPLAY "Error: El producto con ID " WS-PID
+                   " ya existe."
+               END-READ.
            EXIT.
 
-       BUSCAR-DATO.
-           MOVE WS-PID TO Product-ID
-           READ Productos INTO Product KEY IS Product-ID
-           INVALID KEY
-               PERFORM INGRESO
-               WRITE Product
-               DISPLAY X"1B" & "[2J"
-               DISPLAY "Registro guardado correctamente"
-           NOT INVALID KEY
-               EXIT
-           END-READ
+           Ingreso.
+               DISPLAY "Ingrese nombre del producto: "
+               ACCEPT Nombre
+               DISPLAY "Ingrese Stock Actual: "
+               ACCEPT Stock
+               DISPLAY "Ingrese Precio Unitario: "
+               ACCEPT Precio-Unitario
+               DISPLAY "Ingrese Categoría: "
+               ACCEPT Categoria
+               DISPLAY "Ingrese Proveedor: "
+               ACCEPT Proveedor
+               ACCEPT WS-Fecha FROM DATE
+               MOVE WS-Fecha(7:2) TO Dia-Registro
+               MOVE WS-Fecha(5:2) TO Mes-Registro
+               MOVE WS-Fecha(1:4) TO Ano-Registro
+               MOVE 0 TO Dia-Modificacion
+               MOVE 0 TO Mes-Modificacion
+               MOVE 0 TO Ano-Modificacion
+               DISPLAY "Ingrese Ubicación: "
+               ACCEPT Ubicacion
+               DISPLAY "Ingrese Stock Mínimo: "
+               ACCEPT Stock-Minimo
+               DISPLAY "Ingrese Estado: "
+               ACCEPT Estado
+               DISPLAY "Ingrese Descripción: "
+               ACCEPT Descripcion
+               DISPLAY "Ingrese Unidad de Medida: "
+               ACCEPT Unidad-Medida.
            EXIT.
+      *>================================================================*

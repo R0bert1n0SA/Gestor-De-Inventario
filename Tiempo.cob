@@ -14,10 +14,6 @@
        01  Product.
            05 Product-ID               PIC X(10).
            05 P-Nombre                 PIC X(30).
-           05 P-Stock                  PIC 9(7).
-           05 P-Precio-Unitario        PIC 9(5)V99.
-           05 P-Categoria              PIC X(20).
-           05 P-Proveedor              PIC X(50).
            05 P-Fecha-Registro.
                10 Registro-Ano         PIC 9(4).
                10 Registro-Mes         PIC 9(2).
@@ -26,11 +22,7 @@
                10 Modificacion-Ano     PIC 9(4).
                10 Modificacion-Mes     PIC 9(2).
                10 Modificacion-Dia     PIC 9(2).
-           05 P-Ubicacion              PIC X(50).
-           05 P-Stock-Minimo           PIC 9(7).
-           05 P-Estado                 PIC X(10).
-           05 P-Descripcion            PIC X(100).
-           05 P-Unidad-Medida          PIC X(2).
+
 
        WORKING-STORAGE SECTION.
            01 WS-Control.

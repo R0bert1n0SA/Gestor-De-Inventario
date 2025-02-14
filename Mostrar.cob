@@ -39,42 +39,56 @@
 
        PROCEDURE DIVISION.
            MAIN-PROCEDURE.
-               PERFORM MOSTRAR
+               PERFORM Iniciar
            EXIT PROGRAM.
 
 
-       MOSTRAR.
-           OPEN INPUT Productos
-           PERFORM UNTIL WS-EOF-Flag = 'Y'
-               READ Productos INTO Product
-                   AT END
-                       MOVE 'Y' TO WS-EOF-Flag
-                       DISPLAY "Fin de archivo alcanzado"
-                   NOT AT END
-                       PERFORM Imprimir
-               END-READ
-           END-PERFORM
-           CLOSE Productos
-           MOVE 'N' TO WS-EOF-Flag
+      *================================================================*
+       *> SECCION Inicio
+       *> Intenta abrir el archivo de productos y maneja errores.
+      *================================================================*
+       Iniciar SECTION.
+           Inicio.
+               OPEN INPUT Productos
+               IF WS-FileStatus = '00' THEN
+                   PERFORM Recorrer
+               ELSE
+                   CALL "Errores" USING WS-FileStatus
+               END-IF.
            EXIT.
 
-       Imprimir.
-           DISPLAY "--------------------------------"
-           DISPLAY "ID: " Product-ID
-           DISPLAY "Nombre: " P-Nombre
-           DISPLAY "Stock Actual: " P-Stock
-           DISPLAY "Precio Unitario: " P-Precio-Unitario
-           DISPLAY "Categoria: " P-Categoria
-           DISPLAY "Proveedor: " P-Proveedor
-           DISPLAY "Fecha Registro: "
-                   Dia-Registro "/" Mes-Registro
-                   "/" Ano-Registro
-           DISPLAY "Fecha Modificacion: "
-                    Dia-Modificacion "/" Mes-Modificacion "/"
-                    Ano-Modificacion
-           DISPLAY "Ubicacion: " P-Ubicacion
-           DISPLAY "Stock Minimo: " P-Stock-Minimo
-           DISPLAY "Estado: " P-Estado
-           DISPLAY "Descripcion: " P-Descripcion
-           DISPLAY "Unidad de Medida: " P-Unidad-Medida
-       EXIT.
+
+           Recorrer.
+               PERFORM UNTIL WS-EOF-Flag = 'Y'
+                   READ Productos INTO Product
+                       AT END
+                           MOVE 'Y' TO WS-EOF-Flag
+                       NOT AT END
+                           PERFORM Imprimir
+                    END-READ
+               END-PERFORM
+               CLOSE Productos
+           EXIT.
+
+
+           Imprimir.
+               DISPLAY "--------------------------------"
+               DISPLAY "ID: " Product-ID
+               DISPLAY "Nombre: " P-Nombre
+               DISPLAY "Stock Actual: " P-Stock
+               DISPLAY "Precio Unitario: " P-Precio-Unitario
+               DISPLAY "Categoria: " P-Categoria
+               DISPLAY "Proveedor: " P-Proveedor
+               DISPLAY "Fecha Registro: "
+                       Dia-Registro "/" Mes-Registro
+                       "/" Ano-Registro
+               DISPLAY "Fecha Modificacion: "
+                       Dia-Modificacion "/" Mes-Modificacion "/"
+                       Ano-Modificacion
+               DISPLAY "Ubicacion: " P-Ubicacion
+               DISPLAY "Stock Minimo: " P-Stock-Minimo
+               DISPLAY "Estado: " P-Estado
+               DISPLAY "Descripcion: " P-Descripcion
+               DISPLAY "Unidad de Medida: " P-Unidad-Medida
+           EXIT.
+      *================================================================*
