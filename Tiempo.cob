@@ -21,23 +21,23 @@
                05 WS-Mod400            PIC 9(3).
            01 WS-BanderaValidacion     PIC 9(2) VALUE 0.
        LINKAGE SECTION.
+           01 LK-Flag                     PIC 9(2).
+           01 LK-Nombre                PIC X(30).
            01 LK-Parametros.
-               05 Flag                  PIC 9(2).
-               05 DiasDesactualizado    PIC 9(3).
+               05 DiasDesactualizado   PIC 9(3).
                05 R-Fecha.
-                   10 RF-Anio           PIC 9(4).
-                   10 RF-Mes            PIC 9(2).
-                   10 RF-Dia            PIC 9(2).
+                   10 RF-Anio          PIC 9(4).
+                   10 RF-Mes           PIC 9(2).
+                   10 RF-Dia           PIC 9(2).
                05 M-Fecha.
-                   10 MF-Anio           PIC 9(4).
-                   10 MF-Mes            PIC 9(2).
-                   10 MF-Dia            PIC 9(2).
-               05 Nombre                PIC X(30).
-               05 DiasPorMes            PIC 9(2) OCCURS 13 TIMES.
-               05 FechaMasReciente      PIC 9(8) VALUE 0.
-               05 FechaString           PIC X(12).
+                   10 MF-Anio          PIC 9(4).
+                   10 MF-Mes           PIC 9(2).
+                   10 MF-Dia           PIC 9(2).
+               05 DiasPorMes           PIC 9(2) OCCURS 13 TIMES.
+               05 FechaMasReciente     PIC 9(8) VALUE 0.
+               05 FechaString          PIC X(12).
 
-       PROCEDURE DIVISION USING LK-Parametros.
+       PROCEDURE DIVISION USING LK-Flag,LK-Nombre,LK-Parametros.
        MAIN-PROCEDURE.
            PERFORM Procesar
        EXIT PROGRAM.
@@ -54,7 +54,7 @@
 
        *> Procesamiento de registros
            Procesar-Registros.
-               EVALUATE Flag
+               EVALUATE LK-Flag
                    WHEN 11
                        PERFORM Analizar-Desactualizacion
                    WHEN 12
@@ -156,9 +156,8 @@
            Evaluar-Desactualizacion.
                COMPUTE WS-DiasTranscurridos =(WS-DiasActuales
                - WS-DiasPrevios)
-               DISPLAY WS-DiasTranscurridos " > "DiasDesactualizado
                IF WS-DiasTranscurridos > DiasDesactualizado THEN
-                   DISPLAY Nombre
+                   DISPLAY LK-Nombre
                END-IF
            EXIT.
       *================================================================*

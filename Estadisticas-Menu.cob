@@ -44,8 +44,6 @@
            05 TC-Categoria         PIC X(20).
            05 TC-Total             PIC 9(9).
 
-
-
        WORKING-STORAGE SECTION.
            01 WS-Control.
                05 WS-FileStatus        PIC XX.
@@ -58,37 +56,27 @@
                05 R-EOF                PIC X(1).
                05 R-estado             PIC X(1).
 
+
+
            01 WS-GeneralSubrutina.
-               05 GS-Flag              PIC 9(2).
                05 GS-Total             PIC 9(9).
-               05 GS-Stock             PIC 9(7).
 
            01 WS-ProductosSubrutina.
-               05 PS-Flag              PIC 9(2).
-               05 PS-Maximo            PIC 9(7) VALUE 0.
-               05 PS-Minimo            PIC 9(7) VALUE 9999999.
+               05 PS-Top               PIC 9(7) VALUE 0.
                05 PS-NombreRank        PIC X(30).
-               05 PS-NombreA           PIC X(30).
-               05 PS-Stock             PIC 9(7).
+
 
            01 WS-CategoriaSubrutina.
-               05 CS-Flag              PIC 9(2).
-               05 CS-Categoria         PIC X(20).
-           01 CS-Maximo                PIC 9(8).
-           01 CS-CategoriaMax          PIC X(20).
+               05 CS-Maximo                PIC 9(8).
+               05 CS-CategoriaMax          PIC X(20).
 
            01 WS-FinanzasSubrutina.
-               05 FS-Flag              PIC 9(2).
                05 FS-Total             PIC 9(9)v99.
-               05 FS-Nombre            PIC X(30).
                05 FS-NombreF           PIC X(30).
-               05 FS-Precio-Unitario   PIC 9(5)V99.
-               05 FS-Stock             PIC 9(7).
                05 FS-Top               PIC 9(5)v99.
 
 
            01 WS-TiempoSubrutina.
-               05 TS-Flag              PIC 9(2).
                05 TS-DiasDesac         PIC 9(3).
                05 TS-Fecha-Reg.
                    10 RF-Anio           PIC 9(4).
@@ -98,7 +86,6 @@
                    10 MF-Anio           PIC 9(4).
                    10 MF-Mes            PIC 9(2).
                    10 MF-Dias           PIC 9(2).
-               05 TS-Nombre             PIC X(30).
                05 TS-DiasPorMes         PIC 9(2) OCCURS 13 TIMES.
                05 TS-FechaMasReciente   PIC 9(8) VALUE 0.
                05 TS-FechaString        PIC X(12).
@@ -172,28 +159,63 @@
        Inicializar SECTION.
            Inicio.
             *>Inicializar Registros
-              MOVE 0       TO PS-Flag,GS-Flag,CS-Flag,FS-Flag,TS-Flag
-              ,WS-Opcion11
-              MOVE 9999999 TO PS-Minimo
-              MOVE 0       TO PS-Maximo,CS-Maximo,TS-FechaMasReciente
-              MOVE " "     TO PS-NombreRank,CS-CategoriaMax,FS-NombreF
-              MOVE " "     TO PS-NombreA,CS-Categoria,FS-Nombre
-              ,TS-Nombre
-              MOVE 0       TO PS-Stock,GS-Stock,FS-Precio-Unitario
-              ,FS-Stock
-              MOVE 0       TO GS-Total,FS-Total
-              ,TS-DiasDesac
-              MOVE 'N'     TO R-EOF
-              MOVE 'P'     TO R-estado
-              INITIALIZE TS-Fecha-Reg.
-              INITIALIZE TS-Fecha-Mod.
+               EVALUATE WS-opcion
+                   WHEN 1 THRU 2
+                       PERFORM Iniciar-Gs
+                   WHEN 3 THRU 5
+                       PERFORM Iniciar-Ps
+                   WHEN 6 THRU 7
+                       PERFORM Iniciar-Cs
+                   WHEN 8 THRU 10
+                       PERFORM Iniciar-Fs
+                   WHEN 11 THRU 12
+                       PERFORM Iniciar-Ts
+               END-EVALUATE
+               MOVE 0       TO WS-Opcion11
+               MOVE 'N'     TO R-EOF
+               MOVE 'P'     TO R-estado
+           EXIT.
 
+
+           Iniciar-Gs.
+               MOVE 0 TO GS-Total
+           EXIT.
+
+
+           Iniciar-Ps.
+               MOVE " " TO PS-NombreRank
+               IF WS-opcion = 3
+                   MOVE 0   TO PS-Top
+               ELSE
+                   MOVE 9999999 TO PS-Top
+               END-IF
+           EXIT.
+
+
+           Iniciar-Cs.
+               MOVE 0 TO CS-Maximo
+               MOVE " " TO CS-CategoriaMax
+           EXIT.
+
+           Iniciar-Fs.
+               MOVE 0   TO FS-Total
+               MOVE " " TO FS-NombreF
               IF WS-opcion = 9 THEN
                  MOVE 0 TO FS-Top
               ELSE
                  MOVE 99999 TO FS-Top
               END-IF
            EXIT.
+
+           Iniciar-Ts.
+               MOVE 0   TO TS-DiasDesac,TS-FechaMasReciente
+               MOVE " " TO TS-FechaString
+               PERFORM InicializarDiasPorMes
+               INITIALIZE TS-Fecha-Reg.
+               INITIALIZE TS-Fecha-Mod.
+           EXIT.
+
+
 
            InicializarDiasPorMes.
                MOVE 31 TO  TS-DiasPorMes(1),
@@ -214,12 +236,6 @@
            EXIT.
 
 
-
-
-
-
-
-
            CrearTC.
                OPEN INPUT TCont
                IF WS-File-StatusTemp = "35" THEN
@@ -231,12 +247,6 @@
            EXIT.
 
            Carga-Elemento.
-               MOVE WS-opcion          TO PS-Flag,GS-Flag,CS-Flag
-               ,TS-Flag,FS-Flag
-               MOVE P-Stock            TO PS-Stock,GS-Stock,FS-Stock
-               MOVE P-Nombre           TO PS-NombreA,FS-Nombre,TS-Nombre
-               MOVE P-Categoria        TO CS-Categoria
-               MOVE P-Precio-Unitario  TO FS-Precio-Unitario
                MOVE P-Fecha-Registro     TO TS-Fecha-Reg
                MOVE P-Fecha-Modificacion TO TS-Fecha-Mod
            EXIT.
@@ -246,12 +256,10 @@
 
       *================================================================*
        *>  SECCION Ciclo-General
-       *>
-       *>
+       *>  Seccion de todas la funciones del menu
       *================================================================*
        Ciclo SECTION.
            Bucle.
-               PERFORM InicializarDiasPorMes
                PERFORM UNTIL WS-flag = 1
                    PERFORM Menu
                    DISPLAY X"1B" & "[2J"
@@ -315,7 +323,6 @@
                        PERFORM Categoria-Lectura
                    END-IF
                END-PERFORM
-
                MOVE 'N' TO R-EOF
            EXIT.
 
@@ -354,18 +361,19 @@
            Evaluar-Opciones.
                EVALUATE WS-opcion
                    WHEN 1 THRU 2
-                       CALL "General" USING
-                       WS-GeneralSubrutina
+                       CALL "General" USING WS-opcion,
+                       WS-GeneralSubrutina,P-Stock
                    WHEN 3 THRU 5
-                       CALL "Productos" USING
-                       WS-ProductosSubrutina,P-Stock-Minimo
+                       CALL "Productos" USING WS-opcion,P-Stock,P-Nombre
+                       ,WS-ProductosSubrutina,P-Stock-Minimo
                    WHEN 6 THRU 7
-                       CALL "Categoria" USING
-                       WS-CategoriaSubrutina
+                       CALL "Categoria" USING WS-opcion,P-Categoria
                    WHEN 8 THRU 10
-                       CALL "Finanzas" USING WS-FinanzasSubrutina
+                       CALL "Finanzas" USING WS-opcion,P-Stock,P-Nombre
+                       ,P-Precio-Unitario,WS-FinanzasSubrutina
                    WHEN 11 THRU 12
-                       CALL "Tiempo" USING WS-TiempoSubrutina
+                       CALL "Tiempo" USING WS-opcion,P-Nombre
+                       ,WS-TiempoSubrutina
                    WHEN 0
                        DISPLAY X"1B" & "[2J"
                        MOVE 1 TO WS-flag

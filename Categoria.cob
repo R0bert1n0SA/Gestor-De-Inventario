@@ -23,11 +23,10 @@
                05 WS-EOF-FlagCa        PIC X(1) VALUE 'N'.
 
        LINKAGE SECTION.
-           01 LK-Parametros.
-               05 Flag   PIC 9(2).
-               05 Categoria PIC X(20).
+           01 LK-Flag   PIC 9(2).
+           01 LK-Categoria PIC X(20).
 
-       PROCEDURE DIVISION USING LK-Parametros.
+       PROCEDURE DIVISION USING LK-Flag,LK-Categoria.
        MAIN-PROCEDURE.
            PERFORM Categoria-op
        EXIT PROGRAM.
@@ -40,7 +39,7 @@
                INVALID KEY
                    MOVE 1 TO TC-Total
                    WRITE Contador
-                   MOVE SPACES TO Categoria
+                   MOVE SPACES TO LK-Categoria
                NOT INVALID KEY
                    ADD 1 TO TC-Total GIVING TC-Total
                    REWRITE Contador
@@ -51,6 +50,6 @@
 
 
        Categoria-op.
-           MOVE FUNCTION TRIM(Categoria) TO TC-Categoria
+           MOVE FUNCTION TRIM(LK-Categoria) TO TC-Categoria
            PERFORM Contabilizar
        EXIT.
