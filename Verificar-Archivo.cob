@@ -20,7 +20,6 @@
 
        PROCEDURE DIVISION .
            MAIN-PROCEDURE.
-               DISPLAY "g"
                PERFORM Existe
            EXIT PROGRAM.
 

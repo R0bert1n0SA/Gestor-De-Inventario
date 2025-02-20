@@ -95,6 +95,7 @@
 
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
+           DISPLAY "Estadisticas"
            PERFORM Bucle
        EXIT PROGRAM.
 
@@ -331,6 +332,7 @@
                    AT END
                        MOVE 'Y' TO R-EOF
                    NOT AT END
+                       DISPLAY "3"
                        PERFORM Carga-Elemento
                        PERFORM Evaluar-Opciones
                 END-READ

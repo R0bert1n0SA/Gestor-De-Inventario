@@ -172,7 +172,7 @@
                            WRITE Product
                        END-IF
                    WHEN 2
-                       CALL "Actualizar"   USING R-KeyOpcion,Product
+                       CALL "Actualizacion"   USING R-KeyOpcion,Product
                        IF Product-ID NOT = "no valid" THEN
                            REWRITE Product
                        END-IF
