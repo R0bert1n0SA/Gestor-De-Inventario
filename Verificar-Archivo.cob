@@ -12,13 +12,15 @@
        DATA DIVISION.
        FILE SECTION.
        FD  Productos.
-           01 Product-ID PIC X(10).
+           01 Product.
+               05 Product-ID PIC X(10).
 
        WORKING-STORAGE SECTION.
            01 WS-FileStatus PIC XX.
 
        PROCEDURE DIVISION .
            MAIN-PROCEDURE.
+               DISPLAY "g"
                PERFORM Existe
            EXIT PROGRAM.
 
